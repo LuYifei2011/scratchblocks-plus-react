@@ -1,69 +1,38 @@
 import * as React from "react"
+import scratchblocks, { RenderOptions } from "scratchblocks-plus"
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  blockStyle?: "snap" | "snap-flat" | "scratch2" | "scratch3" | "scratch3-high-contrast",
-  languages?: string[],
-  inline?: boolean,
-  wrap?: boolean,
-  wrapSize?: number | null,
-  zebraColoring?: boolean,
-  showSpaces?: boolean,
-  santa?: boolean,
-  scale?: number,
+  blockStyle?: "scratch2" | "scratch3" | "scratch3-high-contrast"
+  languages?: string[]
+  inline?: boolean
+  scale?: number
 }
 
-interface Options {
-  style?: "snap" | "snap-flat" | "scratch2" | "scratch3" | "scratch3-high-contrast",
-  languages?: string[],
-  inline?: boolean,
-  wrap?: boolean,
-  wrapSize?: number | null,
-  zebraColoring?: boolean,
-  showSpaces?: boolean,
-  santa?: boolean,
-  scale?: number,
-}
-
-
-class SnapBlocks extends React.Component {
-  snapblocks: any
+class ScratchBlocks extends React.Component {
   isBrowser: boolean
   blockRef: React.RefObject<any>
   props: Props
 
   constructor(props: Props) {
     super(props)
-  
-    this.snapblocks = null
-    this.isBrowser = typeof window != 'undefined'
+
+    this.isBrowser = typeof window != "undefined"
     this.blockRef = React.createRef()
   }
 
-  async importSnapblocks() {
-    const snapblocks = await import('snapblocks')
-    return snapblocks.default
-  }
-
   async renderBlocks() {
-    const snapblocks = await this.importSnapblocks()
-
-    let options: Options = {
-      wrap: true,
-      zebraColoring: true,
-      showSpaces: true,
-    }
-    if (this.props.blockStyle !== undefined) options.style = this.props.blockStyle
-    if (this.props.languages !== undefined) options.languages = this.props.languages
+    let options: RenderOptions = {}
+    if (this.props.blockStyle !== undefined)
+      options.style = this.props.blockStyle
+    else options.style = "scratch3"
+    if (this.props.languages !== undefined)
+      options.languages = this.props.languages
     if (this.props.inline !== undefined) options.inline = this.props.inline
     if (this.props.scale !== undefined) options.scale = this.props.scale
-    if (this.props.wrap !== undefined) options.wrap = this.props.wrap
-    if (this.props.wrapSize !== undefined) options.wrapSize = this.props.wrapSize
-    if (this.props.zebraColoring !== undefined) options.zebraColoring = this.props.zebraColoring
-    if (this.props.showSpaces !== undefined) options.showSpaces = this.props.showSpaces
-    if (this.props.santa !== undefined) options.santa = this.props.santa
+    else options.scale = /^scratch3($|-)/.test(options.style) ? 0.675 : 1
 
-    const doc = snapblocks.parse(this.props.children, options)
-    const svg = snapblocks.render(doc, options)
+    const doc = scratchblocks.parse(this.props.children.toString(), options)
+    const svg = scratchblocks.render(doc, options)
 
     const node: any = this.blockRef.current
     if (node == null) {
@@ -96,11 +65,23 @@ class SnapBlocks extends React.Component {
 
   render() {
     if (this.props.inline) {
-      return <span ref={this.blockRef}></span>
+      return (
+        <span
+          ref={this.blockRef}
+          style={this.props.style}
+          className={this.props.className}
+        ></span>
+      )
     } else {
-      return <div ref={this.blockRef}></div>
+      return (
+        <div
+          ref={this.blockRef}
+          style={this.props.style}
+          className={this.props.className}
+        ></div>
+      )
     }
   }
 }
 
-export default SnapBlocks
+export default ScratchBlocks
