@@ -91,6 +91,7 @@ function MyComponent() {
 | blockStyle | "scratch3" | "scratch2", "scratch3", or "scratch3-high-contrast" | Changes the visual style of the rendered blocks.                     |
 | languages  | ["en"]     | An array of language codes such as ["en", "de"]     | Enables the use of non-english languages. Requires additional setup. |
 | inline     | {false}    | {true} or {false}                                   | Write scratchblocks-plus inline in text. This is not recommended.    |
+| scale      | {0.675}    | Any positive number                                 | Scales the rendered blocks.                                          |
 
 > [!Note]
 > The `scale` prop's default value is `0.675` when `blockStyle` is `scratch3` or `scratch3-high-contrast`, and `1` otherwise.
